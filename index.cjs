@@ -21,77 +21,74 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  CancelledError: () => import_retryer.CancelledError,
-  InfiniteQueryObserver: () => import_infiniteQueryObserver.InfiniteQueryObserver,
-  Mutation: () => import_mutation.Mutation,
-  MutationCache: () => import_mutationCache.MutationCache,
-  MutationObserver: () => import_mutationObserver.MutationObserver,
-  QueriesObserver: () => import_queriesObserver.QueriesObserver,
-  Query: () => import_query.Query,
-  QueryCache: () => import_queryCache.QueryCache,
-  QueryClient: () => import_queryClient.QueryClient,
-  QueryObserver: () => import_queryObserver.QueryObserver,
-  defaultShouldDehydrateMutation: () => import_hydration.defaultShouldDehydrateMutation,
-  defaultShouldDehydrateQuery: () => import_hydration.defaultShouldDehydrateQuery,
-  dehydrate: () => import_hydration.dehydrate,
-  focusManager: () => import_focusManager.focusManager,
-  hashKey: () => import_utils.hashKey,
-  hydrate: () => import_hydration.hydrate,
-  isCancelledError: () => import_retryer2.isCancelledError,
-  isServer: () => import_utils.isServer,
-  keepPreviousData: () => import_utils.keepPreviousData,
-  matchMutation: () => import_utils.matchMutation,
-  matchQuery: () => import_utils.matchQuery,
-  notifyManager: () => import_notifyManager.notifyManager,
-  onlineManager: () => import_onlineManager.onlineManager,
-  replaceEqualDeep: () => import_utils.replaceEqualDeep,
-  skipToken: () => import_utils.skipToken
+  HydrationBoundary: () => import_HydrationBoundary.HydrationBoundary,
+  IsRestoringProvider: () => import_isRestoring.IsRestoringProvider,
+  QueryClientContext: () => import_QueryClientProvider.QueryClientContext,
+  QueryClientProvider: () => import_QueryClientProvider.QueryClientProvider,
+  QueryErrorResetBoundary: () => import_QueryErrorResetBoundary.QueryErrorResetBoundary,
+  infiniteQueryOptions: () => import_infiniteQueryOptions.infiniteQueryOptions,
+  queryOptions: () => import_queryOptions.queryOptions,
+  useInfiniteQuery: () => import_useInfiniteQuery.useInfiniteQuery,
+  useIsFetching: () => import_useIsFetching.useIsFetching,
+  useIsMutating: () => import_useMutationState.useIsMutating,
+  useIsRestoring: () => import_isRestoring.useIsRestoring,
+  useMutation: () => import_useMutation.useMutation,
+  useMutationState: () => import_useMutationState.useMutationState,
+  usePrefetchInfiniteQuery: () => import_usePrefetchInfiniteQuery.usePrefetchInfiniteQuery,
+  usePrefetchQuery: () => import_usePrefetchQuery.usePrefetchQuery,
+  useQueries: () => import_useQueries.useQueries,
+  useQuery: () => import_useQuery.useQuery,
+  useQueryClient: () => import_QueryClientProvider.useQueryClient,
+  useQueryErrorResetBoundary: () => import_QueryErrorResetBoundary.useQueryErrorResetBoundary,
+  useSuspenseInfiniteQuery: () => import_useSuspenseInfiniteQuery.useSuspenseInfiniteQuery,
+  useSuspenseQueries: () => import_useSuspenseQueries.useSuspenseQueries,
+  useSuspenseQuery: () => import_useSuspenseQuery.useSuspenseQuery
 });
 module.exports = __toCommonJS(src_exports);
-var import_retryer = require("./retryer.cjs");
-var import_queryCache = require("./queryCache.cjs");
-var import_queryClient = require("./queryClient.cjs");
-var import_queryObserver = require("./queryObserver.cjs");
-var import_queriesObserver = require("./queriesObserver.cjs");
-var import_infiniteQueryObserver = require("./infiniteQueryObserver.cjs");
-var import_mutationCache = require("./mutationCache.cjs");
-var import_mutationObserver = require("./mutationObserver.cjs");
-var import_notifyManager = require("./notifyManager.cjs");
-var import_focusManager = require("./focusManager.cjs");
-var import_onlineManager = require("./onlineManager.cjs");
-var import_utils = require("./utils.cjs");
-var import_retryer2 = require("./retryer.cjs");
-var import_hydration = require("./hydration.cjs");
+__reExport(src_exports, require("@tanstack/query-core"), module.exports);
 __reExport(src_exports, require("./types.cjs"), module.exports);
-var import_query = require("./query.cjs");
-var import_mutation = require("./mutation.cjs");
+var import_useQueries = require("./useQueries.cjs");
+var import_useQuery = require("./useQuery.cjs");
+var import_useSuspenseQuery = require("./useSuspenseQuery.cjs");
+var import_useSuspenseInfiniteQuery = require("./useSuspenseInfiniteQuery.cjs");
+var import_useSuspenseQueries = require("./useSuspenseQueries.cjs");
+var import_usePrefetchQuery = require("./usePrefetchQuery.cjs");
+var import_usePrefetchInfiniteQuery = require("./usePrefetchInfiniteQuery.cjs");
+var import_queryOptions = require("./queryOptions.cjs");
+var import_infiniteQueryOptions = require("./infiniteQueryOptions.cjs");
+var import_QueryClientProvider = require("./QueryClientProvider.cjs");
+var import_HydrationBoundary = require("./HydrationBoundary.cjs");
+var import_QueryErrorResetBoundary = require("./QueryErrorResetBoundary.cjs");
+var import_useIsFetching = require("./useIsFetching.cjs");
+var import_useMutationState = require("./useMutationState.cjs");
+var import_useMutation = require("./useMutation.cjs");
+var import_useInfiniteQuery = require("./useInfiniteQuery.cjs");
+var import_isRestoring = require("./isRestoring.cjs");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  CancelledError,
-  InfiniteQueryObserver,
-  Mutation,
-  MutationCache,
-  MutationObserver,
-  QueriesObserver,
-  Query,
-  QueryCache,
-  QueryClient,
-  QueryObserver,
-  defaultShouldDehydrateMutation,
-  defaultShouldDehydrateQuery,
-  dehydrate,
-  focusManager,
-  hashKey,
-  hydrate,
-  isCancelledError,
-  isServer,
-  keepPreviousData,
-  matchMutation,
-  matchQuery,
-  notifyManager,
-  onlineManager,
-  replaceEqualDeep,
-  skipToken,
+  HydrationBoundary,
+  IsRestoringProvider,
+  QueryClientContext,
+  QueryClientProvider,
+  QueryErrorResetBoundary,
+  infiniteQueryOptions,
+  queryOptions,
+  useInfiniteQuery,
+  useIsFetching,
+  useIsMutating,
+  useIsRestoring,
+  useMutation,
+  useMutationState,
+  usePrefetchInfiniteQuery,
+  usePrefetchQuery,
+  useQueries,
+  useQuery,
+  useQueryClient,
+  useQueryErrorResetBoundary,
+  useSuspenseInfiniteQuery,
+  useSuspenseQueries,
+  useSuspenseQuery,
+  ...require("@tanstack/query-core"),
   ...require("./types.cjs")
 });
 //# sourceMappingURL=index.cjs.map
