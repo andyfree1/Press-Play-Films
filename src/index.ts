@@ -1,45 +1,55 @@
 /* istanbul ignore file */
 
-export { CancelledError } from './retryer'
-export { QueryCache } from './queryCache'
-export type { QueryCacheNotifyEvent } from './queryCache'
-export { QueryClient } from './queryClient'
-export { QueryObserver } from './queryObserver'
-export { QueriesObserver } from './queriesObserver'
-export { InfiniteQueryObserver } from './infiniteQueryObserver'
-export { MutationCache } from './mutationCache'
-export type { MutationCacheNotifyEvent } from './mutationCache'
-export { MutationObserver } from './mutationObserver'
-export { notifyManager } from './notifyManager'
-export { focusManager } from './focusManager'
-export { onlineManager } from './onlineManager'
-export {
-  hashKey,
-  replaceEqualDeep,
-  isServer,
-  matchQuery,
-  matchMutation,
-  keepPreviousData,
-  skipToken,
-} from './utils'
-export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
-export { isCancelledError } from './retryer'
-export {
-  dehydrate,
-  hydrate,
-  defaultShouldDehydrateQuery,
-  defaultShouldDehydrateMutation,
-} from './hydration'
+// Re-export core
+export * from '@tanstack/query-core'
 
-// Types
+// React Query
 export * from './types'
-export type { QueryState } from './query'
-export { Query } from './query'
-export type { MutationState } from './mutation'
-export { Mutation } from './mutation'
+export { useQueries } from './useQueries'
+export type { QueriesResults, QueriesOptions } from './useQueries'
+export { useQuery } from './useQuery'
+export { useSuspenseQuery } from './useSuspenseQuery'
+export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
+export { useSuspenseQueries } from './useSuspenseQueries'
 export type {
-  DehydrateOptions,
-  DehydratedState,
-  HydrateOptions,
-} from './hydration'
-export type { QueriesObserverOptions } from './queriesObserver'
+  SuspenseQueriesResults,
+  SuspenseQueriesOptions,
+} from './useSuspenseQueries'
+export { usePrefetchQuery } from './usePrefetchQuery'
+export { usePrefetchInfiniteQuery } from './usePrefetchInfiniteQuery'
+export { queryOptions } from './queryOptions'
+export type {
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+  UnusedSkipTokenOptions,
+} from './queryOptions'
+export { infiniteQueryOptions } from './infiniteQueryOptions'
+export type {
+  DefinedInitialDataInfiniteOptions,
+  UndefinedInitialDataInfiniteOptions,
+  UnusedSkipTokenInfiniteOptions,
+} from './infiniteQueryOptions'
+export {
+  QueryClientContext,
+  QueryClientProvider,
+  useQueryClient,
+} from './QueryClientProvider'
+export type { QueryClientProviderProps } from './QueryClientProvider'
+export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
+export { HydrationBoundary } from './HydrationBoundary'
+export type { HydrationBoundaryProps } from './HydrationBoundary'
+export type {
+  QueryErrorClearResetFunction,
+  QueryErrorIsResetFunction,
+  QueryErrorResetBoundaryFunction,
+  QueryErrorResetFunction,
+} from './QueryErrorResetBoundary'
+export {
+  QueryErrorResetBoundary,
+  useQueryErrorResetBoundary,
+} from './QueryErrorResetBoundary'
+export { useIsFetching } from './useIsFetching'
+export { useIsMutating, useMutationState } from './useMutationState'
+export { useMutation } from './useMutation'
+export { useInfiniteQuery } from './useInfiniteQuery'
+export { useIsRestoring, IsRestoringProvider } from './isRestoring'
