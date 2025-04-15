@@ -1,5 +1,3 @@
-import "./chunk-2HYBKCYP.js";
-
 // src/index.ts
 import { CancelledError } from "./retryer.js";
 import { QueryCache } from "./queryCache.js";

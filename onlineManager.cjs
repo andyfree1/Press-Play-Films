@@ -16,24 +16,6 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __accessCheck = (obj, member, msg) => {
-  if (!member.has(obj))
-    throw TypeError("Cannot " + msg);
-};
-var __privateGet = (obj, member, getter) => {
-  __accessCheck(obj, member, "read from private field");
-  return getter ? getter.call(obj) : member.get(obj);
-};
-var __privateAdd = (obj, member, value) => {
-  if (member.has(obj))
-    throw TypeError("Cannot add the same private member more than once");
-  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-};
-var __privateSet = (obj, member, value, setter) => {
-  __accessCheck(obj, member, "write to private field");
-  setter ? setter.call(obj, value) : member.set(obj, value);
-  return value;
-};
 
 // src/onlineManager.ts
 var onlineManager_exports = {};
@@ -44,14 +26,13 @@ __export(onlineManager_exports, {
 module.exports = __toCommonJS(onlineManager_exports);
 var import_subscribable = require("./subscribable.cjs");
 var import_utils = require("./utils.cjs");
-var _online, _cleanup, _setup;
 var OnlineManager = class extends import_subscribable.Subscribable {
+  #online = true;
+  #cleanup;
+  #setup;
   constructor() {
     super();
-    __privateAdd(this, _online, true);
-    __privateAdd(this, _cleanup, void 0);
-    __privateAdd(this, _setup, void 0);
-    __privateSet(this, _setup, (onOnline) => {
+    this.#setup = (onOnline) => {
       if (!import_utils.isServer && window.addEventListener) {
         const onlineListener = () => onOnline(true);
         const offlineListener = () => onOnline(false);
@@ -63,42 +44,37 @@ var OnlineManager = class extends import_subscribable.Subscribable {
         };
       }
       return;
-    });
+    };
   }
   onSubscribe() {
-    if (!__privateGet(this, _cleanup)) {
-      this.setEventListener(__privateGet(this, _setup));
+    if (!this.#cleanup) {
+      this.setEventListener(this.#setup);
     }
   }
   onUnsubscribe() {
-    var _a;
     if (!this.hasListeners()) {
-      (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-      __privateSet(this, _cleanup, void 0);
+      this.#cleanup?.();
+      this.#cleanup = void 0;
     }
   }
   setEventListener(setup) {
-    var _a;
-    __privateSet(this, _setup, setup);
-    (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-    __privateSet(this, _cleanup, setup(this.setOnline.bind(this)));
+    this.#setup = setup;
+    this.#cleanup?.();
+    this.#cleanup = setup(this.setOnline.bind(this));
   }
   setOnline(online) {
-    const changed = __privateGet(this, _online) !== online;
+    const changed = this.#online !== online;
     if (changed) {
-      __privateSet(this, _online, online);
+      this.#online = online;
       this.listeners.forEach((listener) => {
         listener(online);
       });
     }
   }
   isOnline() {
-    return __privateGet(this, _online);
+    return this.#online;
   }
 };
-_online = new WeakMap();
-_cleanup = new WeakMap();
-_setup = new WeakMap();
 var onlineManager = new OnlineManager();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

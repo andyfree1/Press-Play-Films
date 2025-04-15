@@ -16,24 +16,6 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __accessCheck = (obj, member, msg) => {
-  if (!member.has(obj))
-    throw TypeError("Cannot " + msg);
-};
-var __privateGet = (obj, member, getter) => {
-  __accessCheck(obj, member, "read from private field");
-  return getter ? getter.call(obj) : member.get(obj);
-};
-var __privateAdd = (obj, member, value) => {
-  if (member.has(obj))
-    throw TypeError("Cannot add the same private member more than once");
-  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-};
-var __privateSet = (obj, member, value, setter) => {
-  __accessCheck(obj, member, "write to private field");
-  setter ? setter.call(obj, value) : member.set(obj, value);
-  return value;
-};
 
 // src/focusManager.ts
 var focusManager_exports = {};
@@ -44,14 +26,13 @@ __export(focusManager_exports, {
 module.exports = __toCommonJS(focusManager_exports);
 var import_subscribable = require("./subscribable.cjs");
 var import_utils = require("./utils.cjs");
-var _focused, _cleanup, _setup;
 var FocusManager = class extends import_subscribable.Subscribable {
+  #focused;
+  #cleanup;
+  #setup;
   constructor() {
     super();
-    __privateAdd(this, _focused, void 0);
-    __privateAdd(this, _cleanup, void 0);
-    __privateAdd(this, _setup, void 0);
-    __privateSet(this, _setup, (onFocus) => {
+    this.#setup = (onFocus) => {
       if (!import_utils.isServer && window.addEventListener) {
         const listener = () => onFocus();
         window.addEventListener("visibilitychange", listener, false);
@@ -60,36 +41,34 @@ var FocusManager = class extends import_subscribable.Subscribable {
         };
       }
       return;
-    });
+    };
   }
   onSubscribe() {
-    if (!__privateGet(this, _cleanup)) {
-      this.setEventListener(__privateGet(this, _setup));
+    if (!this.#cleanup) {
+      this.setEventListener(this.#setup);
     }
   }
   onUnsubscribe() {
-    var _a;
     if (!this.hasListeners()) {
-      (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-      __privateSet(this, _cleanup, void 0);
+      this.#cleanup?.();
+      this.#cleanup = void 0;
     }
   }
   setEventListener(setup) {
-    var _a;
-    __privateSet(this, _setup, setup);
-    (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-    __privateSet(this, _cleanup, setup((focused) => {
+    this.#setup = setup;
+    this.#cleanup?.();
+    this.#cleanup = setup((focused) => {
       if (typeof focused === "boolean") {
         this.setFocused(focused);
       } else {
         this.onFocus();
       }
-    }));
+    });
   }
   setFocused(focused) {
-    const changed = __privateGet(this, _focused) !== focused;
+    const changed = this.#focused !== focused;
     if (changed) {
-      __privateSet(this, _focused, focused);
+      this.#focused = focused;
       this.onFocus();
     }
   }
@@ -100,16 +79,12 @@ var FocusManager = class extends import_subscribable.Subscribable {
     });
   }
   isFocused() {
-    var _a;
-    if (typeof __privateGet(this, _focused) === "boolean") {
-      return __privateGet(this, _focused);
+    if (typeof this.#focused === "boolean") {
+      return this.#focused;
     }
-    return ((_a = globalThis.document) == null ? void 0 : _a.visibilityState) !== "hidden";
+    return globalThis.document?.visibilityState !== "hidden";
   }
 };
-_focused = new WeakMap();
-_cleanup = new WeakMap();
-_setup = new WeakMap();
 var focusManager = new FocusManager();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

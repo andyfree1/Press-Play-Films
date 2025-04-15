@@ -64,11 +64,10 @@ var InfiniteQueryObserver = class extends import_queryObserver.QueryObserver {
     });
   }
   createResult(query, options) {
-    var _a, _b;
     const { state } = query;
     const parentResult = super.createResult(query, options);
     const { isFetching, isRefetching, isError, isRefetchError } = parentResult;
-    const fetchDirection = (_b = (_a = state.fetchMeta) == null ? void 0 : _a.fetchMore) == null ? void 0 : _b.direction;
+    const fetchDirection = state.fetchMeta?.fetchMore?.direction;
     const isFetchNextPageError = isError && fetchDirection === "forward";
     const isFetchingNextPage = isFetching && fetchDirection === "forward";
     const isFetchPreviousPageError = isError && fetchDirection === "backward";

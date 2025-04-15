@@ -16,32 +16,6 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __accessCheck = (obj, member, msg) => {
-  if (!member.has(obj))
-    throw TypeError("Cannot " + msg);
-};
-var __privateGet = (obj, member, getter) => {
-  __accessCheck(obj, member, "read from private field");
-  return getter ? getter.call(obj) : member.get(obj);
-};
-var __privateAdd = (obj, member, value) => {
-  if (member.has(obj))
-    throw TypeError("Cannot add the same private member more than once");
-  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-};
-var __privateSet = (obj, member, value, setter) => {
-  __accessCheck(obj, member, "write to private field");
-  setter ? setter.call(obj, value) : member.set(obj, value);
-  return value;
-};
-var __privateWrapper = (obj, member, setter, getter) => ({
-  set _(value) {
-    __privateSet(obj, member, value, setter);
-  },
-  get _() {
-    return __privateGet(obj, member, getter);
-  }
-});
 
 // src/queryClient.ts
 var queryClient_exports = {};
@@ -56,61 +30,58 @@ var import_focusManager = require("./focusManager.cjs");
 var import_onlineManager = require("./onlineManager.cjs");
 var import_notifyManager = require("./notifyManager.cjs");
 var import_infiniteQueryBehavior = require("./infiniteQueryBehavior.cjs");
-var _queryCache, _mutationCache, _defaultOptions, _queryDefaults, _mutationDefaults, _mountCount, _unsubscribeFocus, _unsubscribeOnline;
 var QueryClient = class {
+  #queryCache;
+  #mutationCache;
+  #defaultOptions;
+  #queryDefaults;
+  #mutationDefaults;
+  #mountCount;
+  #unsubscribeFocus;
+  #unsubscribeOnline;
   constructor(config = {}) {
-    __privateAdd(this, _queryCache, void 0);
-    __privateAdd(this, _mutationCache, void 0);
-    __privateAdd(this, _defaultOptions, void 0);
-    __privateAdd(this, _queryDefaults, void 0);
-    __privateAdd(this, _mutationDefaults, void 0);
-    __privateAdd(this, _mountCount, void 0);
-    __privateAdd(this, _unsubscribeFocus, void 0);
-    __privateAdd(this, _unsubscribeOnline, void 0);
-    __privateSet(this, _queryCache, config.queryCache || new import_queryCache.QueryCache());
-    __privateSet(this, _mutationCache, config.mutationCache || new import_mutationCache.MutationCache());
-    __privateSet(this, _defaultOptions, config.defaultOptions || {});
-    __privateSet(this, _queryDefaults, /* @__PURE__ */ new Map());
-    __privateSet(this, _mutationDefaults, /* @__PURE__ */ new Map());
-    __privateSet(this, _mountCount, 0);
+    this.#queryCache = config.queryCache || new import_queryCache.QueryCache();
+    this.#mutationCache = config.mutationCache || new import_mutationCache.MutationCache();
+    this.#defaultOptions = config.defaultOptions || {};
+    this.#queryDefaults = /* @__PURE__ */ new Map();
+    this.#mutationDefaults = /* @__PURE__ */ new Map();
+    this.#mountCount = 0;
   }
   mount() {
-    __privateWrapper(this, _mountCount)._++;
-    if (__privateGet(this, _mountCount) !== 1)
+    this.#mountCount++;
+    if (this.#mountCount !== 1)
       return;
-    __privateSet(this, _unsubscribeFocus, import_focusManager.focusManager.subscribe(async (focused) => {
+    this.#unsubscribeFocus = import_focusManager.focusManager.subscribe(async (focused) => {
       if (focused) {
         await this.resumePausedMutations();
-        __privateGet(this, _queryCache).onFocus();
+        this.#queryCache.onFocus();
       }
-    }));
-    __privateSet(this, _unsubscribeOnline, import_onlineManager.onlineManager.subscribe(async (online) => {
+    });
+    this.#unsubscribeOnline = import_onlineManager.onlineManager.subscribe(async (online) => {
       if (online) {
         await this.resumePausedMutations();
-        __privateGet(this, _queryCache).onOnline();
+        this.#queryCache.onOnline();
       }
-    }));
+    });
   }
   unmount() {
-    var _a, _b;
-    __privateWrapper(this, _mountCount)._--;
-    if (__privateGet(this, _mountCount) !== 0)
+    this.#mountCount--;
+    if (this.#mountCount !== 0)
       return;
-    (_a = __privateGet(this, _unsubscribeFocus)) == null ? void 0 : _a.call(this);
-    __privateSet(this, _unsubscribeFocus, void 0);
-    (_b = __privateGet(this, _unsubscribeOnline)) == null ? void 0 : _b.call(this);
-    __privateSet(this, _unsubscribeOnline, void 0);
+    this.#unsubscribeFocus?.();
+    this.#unsubscribeFocus = void 0;
+    this.#unsubscribeOnline?.();
+    this.#unsubscribeOnline = void 0;
   }
   isFetching(filters) {
-    return __privateGet(this, _queryCache).findAll({ ...filters, fetchStatus: "fetching" }).length;
+    return this.#queryCache.findAll({ ...filters, fetchStatus: "fetching" }).length;
   }
   isMutating(filters) {
-    return __privateGet(this, _mutationCache).findAll({ ...filters, status: "pending" }).length;
+    return this.#mutationCache.findAll({ ...filters, status: "pending" }).length;
   }
   getQueryData(queryKey) {
-    var _a;
     const options = this.defaultQueryOptions({ queryKey });
-    return (_a = __privateGet(this, _queryCache).get(options.queryHash)) == null ? void 0 : _a.state.data;
+    return this.#queryCache.get(options.queryHash)?.state.data;
   }
   ensureQueryData(options) {
     const cachedData = this.getQueryData(options.queryKey);
@@ -118,7 +89,7 @@ var QueryClient = class {
       return this.fetchQuery(options);
     else {
       const defaultedOptions = this.defaultQueryOptions(options);
-      const query = __privateGet(this, _queryCache).build(this, defaultedOptions);
+      const query = this.#queryCache.build(this, defaultedOptions);
       if (options.revalidateIfStale && query.isStaleByTime((0, import_utils.resolveStaleTime)(defaultedOptions.staleTime, query))) {
         void this.prefetchQuery(defaultedOptions);
       }
@@ -126,38 +97,37 @@ var QueryClient = class {
     }
   }
   getQueriesData(filters) {
-    return __privateGet(this, _queryCache).findAll(filters).map(({ queryKey, state }) => {
+    return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
       const data = state.data;
       return [queryKey, data];
     });
   }
   setQueryData(queryKey, updater, options) {
     const defaultedOptions = this.defaultQueryOptions({ queryKey });
-    const query = __privateGet(this, _queryCache).get(
+    const query = this.#queryCache.get(
       defaultedOptions.queryHash
     );
-    const prevData = query == null ? void 0 : query.state.data;
+    const prevData = query?.state.data;
     const data = (0, import_utils.functionalUpdate)(updater, prevData);
     if (data === void 0) {
       return void 0;
     }
-    return __privateGet(this, _queryCache).build(this, defaultedOptions).setData(data, { ...options, manual: true });
+    return this.#queryCache.build(this, defaultedOptions).setData(data, { ...options, manual: true });
   }
   setQueriesData(filters, updater, options) {
     return import_notifyManager.notifyManager.batch(
-      () => __privateGet(this, _queryCache).findAll(filters).map(({ queryKey }) => [
+      () => this.#queryCache.findAll(filters).map(({ queryKey }) => [
         queryKey,
         this.setQueryData(queryKey, updater, options)
       ])
     );
   }
   getQueryState(queryKey) {
-    var _a;
     const options = this.defaultQueryOptions({ queryKey });
-    return (_a = __privateGet(this, _queryCache).get(options.queryHash)) == null ? void 0 : _a.state;
+    return this.#queryCache.get(options.queryHash)?.state;
   }
   removeQueries(filters) {
-    const queryCache = __privateGet(this, _queryCache);
+    const queryCache = this.#queryCache;
     import_notifyManager.notifyManager.batch(() => {
       queryCache.findAll(filters).forEach((query) => {
         queryCache.remove(query);
@@ -165,7 +135,7 @@ var QueryClient = class {
     });
   }
   resetQueries(filters, options) {
-    const queryCache = __privateGet(this, _queryCache);
+    const queryCache = this.#queryCache;
     const refetchFilters = {
       type: "active",
       ...filters
@@ -180,13 +150,13 @@ var QueryClient = class {
   cancelQueries(filters = {}, cancelOptions = {}) {
     const defaultedCancelOptions = { revert: true, ...cancelOptions };
     const promises = import_notifyManager.notifyManager.batch(
-      () => __privateGet(this, _queryCache).findAll(filters).map((query) => query.cancel(defaultedCancelOptions))
+      () => this.#queryCache.findAll(filters).map((query) => query.cancel(defaultedCancelOptions))
     );
     return Promise.all(promises).then(import_utils.noop).catch(import_utils.noop);
   }
   invalidateQueries(filters = {}, options = {}) {
     return import_notifyManager.notifyManager.batch(() => {
-      __privateGet(this, _queryCache).findAll(filters).forEach((query) => {
+      this.#queryCache.findAll(filters).forEach((query) => {
         query.invalidate();
       });
       if (filters.refetchType === "none") {
@@ -202,10 +172,10 @@ var QueryClient = class {
   refetchQueries(filters = {}, options) {
     const fetchOptions = {
       ...options,
-      cancelRefetch: (options == null ? void 0 : options.cancelRefetch) ?? true
+      cancelRefetch: options?.cancelRefetch ?? true
     };
     const promises = import_notifyManager.notifyManager.batch(
-      () => __privateGet(this, _queryCache).findAll(filters).filter((query) => !query.isDisabled()).map((query) => {
+      () => this.#queryCache.findAll(filters).filter((query) => !query.isDisabled()).map((query) => {
         let promise = query.fetch(void 0, fetchOptions);
         if (!fetchOptions.throwOnError) {
           promise = promise.catch(import_utils.noop);
@@ -220,7 +190,7 @@ var QueryClient = class {
     if (defaultedOptions.retry === void 0) {
       defaultedOptions.retry = false;
     }
-    const query = __privateGet(this, _queryCache).build(this, defaultedOptions);
+    const query = this.#queryCache.build(this, defaultedOptions);
     return query.isStaleByTime(
       (0, import_utils.resolveStaleTime)(defaultedOptions.staleTime, query)
     ) ? query.fetch(defaultedOptions) : Promise.resolve(query.state.data);
@@ -241,30 +211,30 @@ var QueryClient = class {
   }
   resumePausedMutations() {
     if (import_onlineManager.onlineManager.isOnline()) {
-      return __privateGet(this, _mutationCache).resumePausedMutations();
+      return this.#mutationCache.resumePausedMutations();
     }
     return Promise.resolve();
   }
   getQueryCache() {
-    return __privateGet(this, _queryCache);
+    return this.#queryCache;
   }
   getMutationCache() {
-    return __privateGet(this, _mutationCache);
+    return this.#mutationCache;
   }
   getDefaultOptions() {
-    return __privateGet(this, _defaultOptions);
+    return this.#defaultOptions;
   }
   setDefaultOptions(options) {
-    __privateSet(this, _defaultOptions, options);
+    this.#defaultOptions = options;
   }
   setQueryDefaults(queryKey, options) {
-    __privateGet(this, _queryDefaults).set((0, import_utils.hashKey)(queryKey), {
+    this.#queryDefaults.set((0, import_utils.hashKey)(queryKey), {
       queryKey,
       defaultOptions: options
     });
   }
   getQueryDefaults(queryKey) {
-    const defaults = [...__privateGet(this, _queryDefaults).values()];
+    const defaults = [...this.#queryDefaults.values()];
     let result = {};
     defaults.forEach((queryDefault) => {
       if ((0, import_utils.partialMatchKey)(queryKey, queryDefault.queryKey)) {
@@ -274,13 +244,13 @@ var QueryClient = class {
     return result;
   }
   setMutationDefaults(mutationKey, options) {
-    __privateGet(this, _mutationDefaults).set((0, import_utils.hashKey)(mutationKey), {
+    this.#mutationDefaults.set((0, import_utils.hashKey)(mutationKey), {
       mutationKey,
       defaultOptions: options
     });
   }
   getMutationDefaults(mutationKey) {
-    const defaults = [...__privateGet(this, _mutationDefaults).values()];
+    const defaults = [...this.#mutationDefaults.values()];
     let result = {};
     defaults.forEach((queryDefault) => {
       if ((0, import_utils.partialMatchKey)(mutationKey, queryDefault.mutationKey)) {
@@ -294,7 +264,7 @@ var QueryClient = class {
       return options;
     }
     const defaultedOptions = {
-      ...__privateGet(this, _defaultOptions).queries,
+      ...this.#defaultOptions.queries,
       ...this.getQueryDefaults(options.queryKey),
       ...options,
       _defaulted: true
@@ -320,29 +290,21 @@ var QueryClient = class {
     return defaultedOptions;
   }
   defaultMutationOptions(options) {
-    if (options == null ? void 0 : options._defaulted) {
+    if (options?._defaulted) {
       return options;
     }
     return {
-      ...__privateGet(this, _defaultOptions).mutations,
-      ...(options == null ? void 0 : options.mutationKey) && this.getMutationDefaults(options.mutationKey),
+      ...this.#defaultOptions.mutations,
+      ...options?.mutationKey && this.getMutationDefaults(options.mutationKey),
       ...options,
       _defaulted: true
     };
   }
   clear() {
-    __privateGet(this, _queryCache).clear();
-    __privateGet(this, _mutationCache).clear();
+    this.#queryCache.clear();
+    this.#mutationCache.clear();
   }
 };
-_queryCache = new WeakMap();
-_mutationCache = new WeakMap();
-_defaultOptions = new WeakMap();
-_queryDefaults = new WeakMap();
-_mutationDefaults = new WeakMap();
-_mountCount = new WeakMap();
-_unsubscribeFocus = new WeakMap();
-_unsubscribeOnline = new WeakMap();
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   QueryClient

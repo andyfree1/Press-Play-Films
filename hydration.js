@@ -1,5 +1,3 @@
-import "./chunk-2HYBKCYP.js";
-
 // src/hydration.ts
 function defaultTransformerFn(data) {
   return data;
@@ -13,7 +11,6 @@ function dehydrateMutation(mutation) {
   };
 }
 function dehydrateQuery(query, serializeData) {
-  var _a;
   return {
     state: {
       ...query.state,
@@ -24,7 +21,7 @@ function dehydrateQuery(query, serializeData) {
     queryKey: query.queryKey,
     queryHash: query.queryHash,
     ...query.state.status === "pending" && {
-      promise: (_a = query.promise) == null ? void 0 : _a.then(serializeData).catch((error) => {
+      promise: query.promise?.then(serializeData).catch((error) => {
         if (process.env.NODE_ENV !== "production") {
           console.error(
             `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`
@@ -43,42 +40,38 @@ function defaultShouldDehydrateQuery(query) {
   return query.state.status === "success";
 }
 function dehydrate(client, options = {}) {
-  var _a, _b, _c;
-  const filterMutation = options.shouldDehydrateMutation ?? ((_a = client.getDefaultOptions().dehydrate) == null ? void 0 : _a.shouldDehydrateMutation) ?? defaultShouldDehydrateMutation;
+  const filterMutation = options.shouldDehydrateMutation ?? client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ?? defaultShouldDehydrateMutation;
   const mutations = client.getMutationCache().getAll().flatMap(
     (mutation) => filterMutation(mutation) ? [dehydrateMutation(mutation)] : []
   );
-  const filterQuery = options.shouldDehydrateQuery ?? ((_b = client.getDefaultOptions().dehydrate) == null ? void 0 : _b.shouldDehydrateQuery) ?? defaultShouldDehydrateQuery;
-  const serializeData = options.serializeData ?? ((_c = client.getDefaultOptions().dehydrate) == null ? void 0 : _c.serializeData) ?? defaultTransformerFn;
+  const filterQuery = options.shouldDehydrateQuery ?? client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ?? defaultShouldDehydrateQuery;
+  const serializeData = options.serializeData ?? client.getDefaultOptions().dehydrate?.serializeData ?? defaultTransformerFn;
   const queries = client.getQueryCache().getAll().flatMap(
     (query) => filterQuery(query) ? [dehydrateQuery(query, serializeData)] : []
   );
   return { mutations, queries };
 }
 function hydrate(client, dehydratedState, options) {
-  var _a, _b;
   if (typeof dehydratedState !== "object" || dehydratedState === null) {
     return;
   }
   const mutationCache = client.getMutationCache();
   const queryCache = client.getQueryCache();
-  const deserializeData = ((_a = options == null ? void 0 : options.defaultOptions) == null ? void 0 : _a.deserializeData) ?? ((_b = client.getDefaultOptions().hydrate) == null ? void 0 : _b.deserializeData) ?? defaultTransformerFn;
+  const deserializeData = options?.defaultOptions?.deserializeData ?? client.getDefaultOptions().hydrate?.deserializeData ?? defaultTransformerFn;
   const mutations = dehydratedState.mutations || [];
   const queries = dehydratedState.queries || [];
   mutations.forEach(({ state, ...mutationOptions }) => {
-    var _a2, _b2;
     mutationCache.build(
       client,
       {
-        ...(_a2 = client.getDefaultOptions().hydrate) == null ? void 0 : _a2.mutations,
-        ...(_b2 = options == null ? void 0 : options.defaultOptions) == null ? void 0 : _b2.mutations,
+        ...client.getDefaultOptions().hydrate?.mutations,
+        ...options?.defaultOptions?.mutations,
         ...mutationOptions
       },
       state
     );
   });
   queries.forEach(({ queryKey, state, queryHash, meta, promise }) => {
-    var _a2, _b2;
     let query = queryCache.get(queryHash);
     const data = state.data === void 0 ? state.data : deserializeData(state.data);
     if (query) {
@@ -93,8 +86,8 @@ function hydrate(client, dehydratedState, options) {
       query = queryCache.build(
         client,
         {
-          ...(_a2 = client.getDefaultOptions().hydrate) == null ? void 0 : _a2.queries,
-          ...(_b2 = options == null ? void 0 : options.defaultOptions) == null ? void 0 : _b2.queries,
+          ...client.getDefaultOptions().hydrate?.queries,
+          ...options?.defaultOptions?.queries,
           queryKey,
           queryHash,
           meta

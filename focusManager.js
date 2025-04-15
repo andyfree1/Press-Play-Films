@@ -1,20 +1,13 @@
-import {
-  __privateAdd,
-  __privateGet,
-  __privateSet
-} from "./chunk-2HYBKCYP.js";
-
 // src/focusManager.ts
 import { Subscribable } from "./subscribable.js";
 import { isServer } from "./utils.js";
-var _focused, _cleanup, _setup;
 var FocusManager = class extends Subscribable {
+  #focused;
+  #cleanup;
+  #setup;
   constructor() {
     super();
-    __privateAdd(this, _focused, void 0);
-    __privateAdd(this, _cleanup, void 0);
-    __privateAdd(this, _setup, void 0);
-    __privateSet(this, _setup, (onFocus) => {
+    this.#setup = (onFocus) => {
       if (!isServer && window.addEventListener) {
         const listener = () => onFocus();
         window.addEventListener("visibilitychange", listener, false);
@@ -23,36 +16,34 @@ var FocusManager = class extends Subscribable {
         };
       }
       return;
-    });
+    };
   }
   onSubscribe() {
-    if (!__privateGet(this, _cleanup)) {
-      this.setEventListener(__privateGet(this, _setup));
+    if (!this.#cleanup) {
+      this.setEventListener(this.#setup);
     }
   }
   onUnsubscribe() {
-    var _a;
     if (!this.hasListeners()) {
-      (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-      __privateSet(this, _cleanup, void 0);
+      this.#cleanup?.();
+      this.#cleanup = void 0;
     }
   }
   setEventListener(setup) {
-    var _a;
-    __privateSet(this, _setup, setup);
-    (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-    __privateSet(this, _cleanup, setup((focused) => {
+    this.#setup = setup;
+    this.#cleanup?.();
+    this.#cleanup = setup((focused) => {
       if (typeof focused === "boolean") {
         this.setFocused(focused);
       } else {
         this.onFocus();
       }
-    }));
+    });
   }
   setFocused(focused) {
-    const changed = __privateGet(this, _focused) !== focused;
+    const changed = this.#focused !== focused;
     if (changed) {
-      __privateSet(this, _focused, focused);
+      this.#focused = focused;
       this.onFocus();
     }
   }
@@ -63,16 +54,12 @@ var FocusManager = class extends Subscribable {
     });
   }
   isFocused() {
-    var _a;
-    if (typeof __privateGet(this, _focused) === "boolean") {
-      return __privateGet(this, _focused);
+    if (typeof this.#focused === "boolean") {
+      return this.#focused;
     }
-    return ((_a = globalThis.document) == null ? void 0 : _a.visibilityState) !== "hidden";
+    return globalThis.document?.visibilityState !== "hidden";
   }
 };
-_focused = new WeakMap();
-_cleanup = new WeakMap();
-_setup = new WeakMap();
 var focusManager = new FocusManager();
 export {
   FocusManager,

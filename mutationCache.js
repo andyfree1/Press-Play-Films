@@ -1,29 +1,21 @@
-import {
-  __privateAdd,
-  __privateGet,
-  __privateSet,
-  __privateWrapper
-} from "./chunk-2HYBKCYP.js";
-
 // src/mutationCache.ts
 import { notifyManager } from "./notifyManager.js";
 import { Mutation } from "./mutation.js";
 import { matchMutation, noop } from "./utils.js";
 import { Subscribable } from "./subscribable.js";
-var _mutations, _mutationId;
 var MutationCache = class extends Subscribable {
   constructor(config = {}) {
     super();
     this.config = config;
-    __privateAdd(this, _mutations, void 0);
-    __privateAdd(this, _mutationId, void 0);
-    __privateSet(this, _mutations, /* @__PURE__ */ new Map());
-    __privateSet(this, _mutationId, Date.now());
+    this.#mutations = /* @__PURE__ */ new Map();
+    this.#mutationId = Date.now();
   }
+  #mutations;
+  #mutationId;
   build(client, options, state) {
     const mutation = new Mutation({
       mutationCache: this,
-      mutationId: ++__privateWrapper(this, _mutationId)._,
+      mutationId: ++this.#mutationId,
       options: client.defaultMutationOptions(options),
       state
     });
@@ -32,35 +24,32 @@ var MutationCache = class extends Subscribable {
   }
   add(mutation) {
     const scope = scopeFor(mutation);
-    const mutations = __privateGet(this, _mutations).get(scope) ?? [];
+    const mutations = this.#mutations.get(scope) ?? [];
     mutations.push(mutation);
-    __privateGet(this, _mutations).set(scope, mutations);
+    this.#mutations.set(scope, mutations);
     this.notify({ type: "added", mutation });
   }
   remove(mutation) {
-    var _a;
     const scope = scopeFor(mutation);
-    if (__privateGet(this, _mutations).has(scope)) {
-      const mutations = (_a = __privateGet(this, _mutations).get(scope)) == null ? void 0 : _a.filter((x) => x !== mutation);
+    if (this.#mutations.has(scope)) {
+      const mutations = this.#mutations.get(scope)?.filter((x) => x !== mutation);
       if (mutations) {
         if (mutations.length === 0) {
-          __privateGet(this, _mutations).delete(scope);
+          this.#mutations.delete(scope);
         } else {
-          __privateGet(this, _mutations).set(scope, mutations);
+          this.#mutations.set(scope, mutations);
         }
       }
     }
     this.notify({ type: "removed", mutation });
   }
   canRun(mutation) {
-    var _a;
-    const firstPendingMutation = (_a = __privateGet(this, _mutations).get(scopeFor(mutation))) == null ? void 0 : _a.find((m) => m.state.status === "pending");
+    const firstPendingMutation = this.#mutations.get(scopeFor(mutation))?.find((m) => m.state.status === "pending");
     return !firstPendingMutation || firstPendingMutation === mutation;
   }
   runNext(mutation) {
-    var _a;
-    const foundMutation = (_a = __privateGet(this, _mutations).get(scopeFor(mutation))) == null ? void 0 : _a.find((m) => m !== mutation && m.state.isPaused);
-    return (foundMutation == null ? void 0 : foundMutation.continue()) ?? Promise.resolve();
+    const foundMutation = this.#mutations.get(scopeFor(mutation))?.find((m) => m !== mutation && m.state.isPaused);
+    return foundMutation?.continue() ?? Promise.resolve();
   }
   clear() {
     notifyManager.batch(() => {
@@ -70,7 +59,7 @@ var MutationCache = class extends Subscribable {
     });
   }
   getAll() {
-    return [...__privateGet(this, _mutations).values()].flat();
+    return [...this.#mutations.values()].flat();
   }
   find(filters) {
     const defaultedFilters = { exact: true, ...filters };
@@ -97,11 +86,8 @@ var MutationCache = class extends Subscribable {
     );
   }
 };
-_mutations = new WeakMap();
-_mutationId = new WeakMap();
 function scopeFor(mutation) {
-  var _a;
-  return ((_a = mutation.options.scope) == null ? void 0 : _a.id) ?? String(mutation.mutationId);
+  return mutation.options.scope?.id ?? String(mutation.mutationId);
 }
 export {
   MutationCache

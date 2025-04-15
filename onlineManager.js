@@ -1,20 +1,13 @@
-import {
-  __privateAdd,
-  __privateGet,
-  __privateSet
-} from "./chunk-2HYBKCYP.js";
-
 // src/onlineManager.ts
 import { Subscribable } from "./subscribable.js";
 import { isServer } from "./utils.js";
-var _online, _cleanup, _setup;
 var OnlineManager = class extends Subscribable {
+  #online = true;
+  #cleanup;
+  #setup;
   constructor() {
     super();
-    __privateAdd(this, _online, true);
-    __privateAdd(this, _cleanup, void 0);
-    __privateAdd(this, _setup, void 0);
-    __privateSet(this, _setup, (onOnline) => {
+    this.#setup = (onOnline) => {
       if (!isServer && window.addEventListener) {
         const onlineListener = () => onOnline(true);
         const offlineListener = () => onOnline(false);
@@ -26,42 +19,37 @@ var OnlineManager = class extends Subscribable {
         };
       }
       return;
-    });
+    };
   }
   onSubscribe() {
-    if (!__privateGet(this, _cleanup)) {
-      this.setEventListener(__privateGet(this, _setup));
+    if (!this.#cleanup) {
+      this.setEventListener(this.#setup);
     }
   }
   onUnsubscribe() {
-    var _a;
     if (!this.hasListeners()) {
-      (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-      __privateSet(this, _cleanup, void 0);
+      this.#cleanup?.();
+      this.#cleanup = void 0;
     }
   }
   setEventListener(setup) {
-    var _a;
-    __privateSet(this, _setup, setup);
-    (_a = __privateGet(this, _cleanup)) == null ? void 0 : _a.call(this);
-    __privateSet(this, _cleanup, setup(this.setOnline.bind(this)));
+    this.#setup = setup;
+    this.#cleanup?.();
+    this.#cleanup = setup(this.setOnline.bind(this));
   }
   setOnline(online) {
-    const changed = __privateGet(this, _online) !== online;
+    const changed = this.#online !== online;
     if (changed) {
-      __privateSet(this, _online, online);
+      this.#online = online;
       this.listeners.forEach((listener) => {
         listener(online);
       });
     }
   }
   isOnline() {
-    return __privateGet(this, _online);
+    return this.#online;
   }
 };
-_online = new WeakMap();
-_cleanup = new WeakMap();
-_setup = new WeakMap();
 var onlineManager = new OnlineManager();
 export {
   OnlineManager,
