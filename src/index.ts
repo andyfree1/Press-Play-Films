@@ -1,35 +1,45 @@
-'use client';
+/* istanbul ignore file */
+
+export { CancelledError } from './retryer'
+export { QueryCache } from './queryCache'
+export type { QueryCacheNotifyEvent } from './queryCache'
+export { QueryClient } from './queryClient'
+export { QueryObserver } from './queryObserver'
+export { QueriesObserver } from './queriesObserver'
+export { InfiniteQueryObserver } from './infiniteQueryObserver'
+export { MutationCache } from './mutationCache'
+export type { MutationCacheNotifyEvent } from './mutationCache'
+export { MutationObserver } from './mutationObserver'
+export { notifyManager } from './notifyManager'
+export { focusManager } from './focusManager'
+export { onlineManager } from './onlineManager'
 export {
-  createAlertDialogScope,
-  //
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  //
-  Root,
-  Trigger,
-  Portal,
-  Overlay,
-  Content,
-  Action,
-  Cancel,
-  Title,
-  Description,
-} from './AlertDialog';
+  hashKey,
+  replaceEqualDeep,
+  isServer,
+  matchQuery,
+  matchMutation,
+  keepPreviousData,
+  skipToken,
+} from './utils'
+export type { MutationFilters, QueryFilters, Updater, SkipToken } from './utils'
+export { isCancelledError } from './retryer'
+export {
+  dehydrate,
+  hydrate,
+  defaultShouldDehydrateQuery,
+  defaultShouldDehydrateMutation,
+} from './hydration'
+
+// Types
+export * from './types'
+export type { QueryState } from './query'
+export { Query } from './query'
+export type { MutationState } from './mutation'
+export { Mutation } from './mutation'
 export type {
-  AlertDialogProps,
-  AlertDialogTriggerProps,
-  AlertDialogPortalProps,
-  AlertDialogOverlayProps,
-  AlertDialogContentProps,
-  AlertDialogActionProps,
-  AlertDialogCancelProps,
-  AlertDialogTitleProps,
-  AlertDialogDescriptionProps,
-} from './AlertDialog';
+  DehydrateOptions,
+  DehydratedState,
+  HydrateOptions,
+} from './hydration'
+export type { QueriesObserverOptions } from './queriesObserver'
