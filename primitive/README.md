@@ -1,11 +1,11 @@
-# `react-arrow`
+# `primitive`
 
 ## Installation
 
 ```sh
-$ yarn add @radix-ui/react-arrow
+$ yarn add @radix-ui/primitive
 # or
-$ npm install @radix-ui/react-arrow
+$ npm install @radix-ui/primitive
 ```
 
 ## Usage

@@ -1,6 +1,6 @@
 {
-  "name": "@radix-ui/react-arrow",
-  "version": "1.1.0",
+  "name": "@radix-ui/react-alert-dialog",
+  "version": "1.1.2",
   "license": "MIT",
   "exports": {
     ".": {
@@ -19,8 +19,8 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "README.md"
+    "src",
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
@@ -28,7 +28,12 @@
     "version": "yarn version"
   },
   "dependencies": {
-    "@radix-ui/react-primitive": "2.0.0"
+    "@radix-ui/primitive": "1.1.0",
+    "@radix-ui/react-compose-refs": "1.1.0",
+    "@radix-ui/react-context": "1.1.1",
+    "@radix-ui/react-dialog": "1.1.2",
+    "@radix-ui/react-primitive": "2.0.0",
+    "@radix-ui/react-slot": "1.1.0"
   },
   "peerDependencies": {
     "@types/react": "*",

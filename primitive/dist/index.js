@@ -17,15 +17,20 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/core/number/src/index.ts
+// packages/core/primitive/src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  clamp: () => clamp
+  composeEventHandlers: () => composeEventHandlers
 });
 module.exports = __toCommonJS(src_exports);
 
-// packages/core/number/src/number.ts
-function clamp(value, [min, max]) {
-  return Math.min(max, Math.max(min, value));
+// packages/core/primitive/src/primitive.tsx
+function composeEventHandlers(originalEventHandler, ourEventHandler, { checkForDefaultPrevented = true } = {}) {
+  return function handleEvent(event) {
+    originalEventHandler?.(event);
+    if (checkForDefaultPrevented === false || !event.defaultPrevented) {
+      return ourEventHandler?.(event);
+    }
+  };
 }
 //# sourceMappingURL=index.js.map
