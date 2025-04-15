@@ -19,7 +19,6 @@ import {
 } from "./suspense.js";
 import { noop } from "./utils.js";
 function useBaseQuery(options, Observer, queryClient) {
-  var _a, _b, _c, _d, _e;
   if (process.env.NODE_ENV !== "production") {
     if (typeof options !== "object" || Array.isArray(options)) {
       throw new Error(
@@ -31,8 +30,7 @@ function useBaseQuery(options, Observer, queryClient) {
   const isRestoring = useIsRestoring();
   const errorResetBoundary = useQueryErrorResetBoundary();
   const defaultedOptions = client.defaultQueryOptions(options);
-  (_b = (_a = client.getDefaultOptions().queries) == null ? void 0 : _a._experimental_beforeQuery) == null ? void 0 : _b.call(
-    _a,
+  client.getDefaultOptions().queries?._experimental_beforeQuery?.(
     defaultedOptions
   );
   defaultedOptions._optimisticResults = isRestoring ? "isRestoring" : "optimistic";
@@ -74,8 +72,7 @@ function useBaseQuery(options, Observer, queryClient) {
     throw result.error;
   }
   ;
-  (_d = (_c = client.getDefaultOptions().queries) == null ? void 0 : _c._experimental_afterQuery) == null ? void 0 : _d.call(
-    _c,
+  client.getDefaultOptions().queries?._experimental_afterQuery?.(
     defaultedOptions,
     result
   );
@@ -85,9 +82,9 @@ function useBaseQuery(options, Observer, queryClient) {
       fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
     ) : (
       // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-      (_e = client.getQueryCache().get(defaultedOptions.queryHash)) == null ? void 0 : _e.promise
+      client.getQueryCache().get(defaultedOptions.queryHash)?.promise
     );
-    promise == null ? void 0 : promise.catch(noop).finally(() => {
+    promise?.catch(noop).finally(() => {
       observer.updateResult();
     });
   }

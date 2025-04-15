@@ -43,7 +43,6 @@ var import_isRestoring = require("./isRestoring.cjs");
 var import_suspense = require("./suspense.cjs");
 var import_utils = require("./utils.cjs");
 function useBaseQuery(options, Observer, queryClient) {
-  var _a, _b, _c, _d, _e;
   if (process.env.NODE_ENV !== "production") {
     if (typeof options !== "object" || Array.isArray(options)) {
       throw new Error(
@@ -55,8 +54,7 @@ function useBaseQuery(options, Observer, queryClient) {
   const isRestoring = (0, import_isRestoring.useIsRestoring)();
   const errorResetBoundary = (0, import_QueryErrorResetBoundary.useQueryErrorResetBoundary)();
   const defaultedOptions = client.defaultQueryOptions(options);
-  (_b = (_a = client.getDefaultOptions().queries) == null ? void 0 : _a._experimental_beforeQuery) == null ? void 0 : _b.call(
-    _a,
+  client.getDefaultOptions().queries?._experimental_beforeQuery?.(
     defaultedOptions
   );
   defaultedOptions._optimisticResults = isRestoring ? "isRestoring" : "optimistic";
@@ -98,8 +96,7 @@ function useBaseQuery(options, Observer, queryClient) {
     throw result.error;
   }
   ;
-  (_d = (_c = client.getDefaultOptions().queries) == null ? void 0 : _c._experimental_afterQuery) == null ? void 0 : _d.call(
-    _c,
+  client.getDefaultOptions().queries?._experimental_afterQuery?.(
     defaultedOptions,
     result
   );
@@ -109,9 +106,9 @@ function useBaseQuery(options, Observer, queryClient) {
       (0, import_suspense.fetchOptimistic)(defaultedOptions, observer, errorResetBoundary)
     ) : (
       // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
-      (_e = client.getQueryCache().get(defaultedOptions.queryHash)) == null ? void 0 : _e.promise
+      client.getQueryCache().get(defaultedOptions.queryHash)?.promise
     );
-    promise == null ? void 0 : promise.catch(import_utils.noop).finally(() => {
+    promise?.catch(import_utils.noop).finally(() => {
       observer.updateResult();
     });
   }

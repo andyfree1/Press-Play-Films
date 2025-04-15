@@ -29,7 +29,7 @@ var HydrationBoundary = ({
           newQueries.push(dehydratedQuery);
         } else {
           const hydrationIsNewer = dehydratedQuery.state.dataUpdatedAt > existingQuery.state.dataUpdatedAt;
-          const queryAlreadyQueued = hydrationQueue == null ? void 0 : hydrationQueue.find(
+          const queryAlreadyQueued = hydrationQueue?.find(
             (query) => query.queryHash === dehydratedQuery.queryHash
           );
           if (hydrationIsNewer && (!queryAlreadyQueued || dehydratedQuery.state.dataUpdatedAt > queryAlreadyQueued.state.dataUpdatedAt)) {
