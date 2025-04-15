@@ -1,12 +1,164 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Press Play Films</title>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Andrew Freeman - Pioneering the intersection of Sales, Technology, and Entertainment through AI Innovation" />
+    
+    <!-- Open Graph / Facebook / Thumbnail meta tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://andrew-freeman.com/" />
+    <meta property="og:title" content="Andrew Freeman - Press Play" />
+    <meta property="og:description" content="Pioneering the intersection of Sales, Technology, and Entertainment through AI Innovation" />
+    <meta property="og:image" content="https://andrew-freeman.com/lovable-uploads/4d3bf38e-7318-4faa-85b9-959152b82c7e.png" />
+    
+    <!-- Twitter / Discord meta tags -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://andrew-freeman.com/" />
+    <meta property="twitter:title" content="Andrew Freeman - Press Play" />
+    <meta property="twitter:description" content="Pioneering the intersection of Sales, Technology, and Entertainment through AI Innovation" />
+    <meta property="twitter:image" content="https://andrew-freeman.com/lovable-uploads/4d3bf38e-7318-4faa-85b9-959152b82c7e.png" />
+    
+    <!-- Extreme cache busting strategy -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- Simple font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Inline critical CSS for immediate display -->
+    <style>
+      /* Core system styles */
+      body { 
+        background-color: #0f172a; 
+        color: white;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      
+      /* Font classes */
+      .font-cinzel {
+        font-family: 'Cinzel', serif;
+      }
+      
+      /* Loading indicator */
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0f172a;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border-top-color: #3b82f6;
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      .loading-text {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #e2e8f0;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      /* Skip link for accessibility */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+      
+      .sr-only:focus {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: auto;
+        height: auto;
+        padding: 1rem;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
+        background-color: #0f172a;
+        color: white;
+        z-index: 9999;
+        text-decoration: none;
+        font-weight: bold;
+        border: 2px solid #3b82f6;
+      }
+    </style>
+    
+    <title>Andrew Freeman</title>
+  </head>
+  <body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#root" class="sr-only">Skip to content</a>
+    
+    <!-- Loading screen that disappears when app is ready -->
+    <div id="loading-screen" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <div class="loading-text">Loading Andrew's Portfolio...</div>
+    </div>
+    
+    <!-- Root for React to mount -->
+    <div id="root"></div>
+    
+    <!-- Required Lovable script tag for new features -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    
+    <!-- Direct import of main.tsx instead of dynamic script creation -->
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <script>
+      // Initialize with a unique session ID to prevent any session-based issues
+      window.sessionId = Date.now().toString() + Math.random().toString(36).substring(2, 10);
+      window.initializerRun = true;
+      
+      // Function to hide loading screen
+      const hideLoadingScreen = () => {
+        setTimeout(() => {
+          const loadingScreen = document.getElementById('loading-screen');
+          if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+              loadingScreen.style.display = 'none';
+            }, 500);
+          }
+        }, 300);
+      };
+      
+      // Hide loading screen when window is loaded
+      window.addEventListener('load', hideLoadingScreen);
+      
+      // Fallback to hide loading screen after 5 seconds
+      setTimeout(hideLoadingScreen, 5000);
+    </script>
+  </body>
 </html>
